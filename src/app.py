@@ -15,5 +15,5 @@ st.markdown(
 if st.button("Send balloons!"):
     st.balloons()
 
-with st.chat_message("user"):
+with st.chat_message("ai"):
     st.markdown("Hello!")

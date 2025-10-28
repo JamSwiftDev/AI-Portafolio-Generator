@@ -1,7 +1,5 @@
 import streamlit as st
 
-st.set_page_config(page_title="AI Portfolio Generator", layout="wide")
-
 st.title("🧠 AI Portfolio Generator")
 st.write("Welcome! This app will help you generate and showcase your AI projects easily.")
 
@@ -13,4 +11,4 @@ if st.button("Generate Portfolio"):
         st.success(f"Portfolio generated for {name}!")
         st.write(f"**Bio:** {bio}")
     else:
-        st.warning("Please fill in both your name and bio.")
+        st.warning("Please fill in both your name and bio.") 

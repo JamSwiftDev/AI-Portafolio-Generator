@@ -1,16 +1,25 @@
 import streamlit as st
+import requests
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+HUGGING_FACE_TOKEN = os.getenv("HUGGING_FACE_TOKEN")
+headers = {"Authorization": f"Bearer {HUGGING_FACE_TOKEN}"}
+
+def query (payload):
+    response = requests.post(HUGGING_FACE_TOKEN, headers=headers, json=payload)
+    return response.json()
 
 st.set_page_config(page_title="AI Portfolio Generator", layout="wide")
 
-st.title("🧠 AI Portfolio Generator")
-st.write("Welcome! This app will help you generate and showcase your AI projects easily.")
 
-name = st.text_input("Enter your name")
-bio = st.text_area("Write a short bio about yourself")
+st.title("🧠 AI Portfolio Generator (Hugging Face API)")
 
-if st.button("Generate Portfolio"):
-    if name and bio:
-        st.success(f"Portfolio generated for {name}!")
-        st.write(f"**Bio:** {bio}")
-    else:
-        st.warning("Please fill in both your name and bio.")
+text = st.text_area("Write your project idea:")
+if st.button("Generate Summary"):
+    if text.strip():
+        with st.spinner("Generating..."):
+            output = query({"inputs": text})
+        st.success(output[0]['summary_text'])

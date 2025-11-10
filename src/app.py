@@ -1,25 +1,30 @@
 import streamlit as st
-import requests
-import os
-from dotenv import load_dotenv
+from portafolio_generator.generator import generate_summary
+from portafolio_generator.templates import create_pdf
 
-load_dotenv()
+st.set_page_config(page_title="Generador de CV", page_icon="📄")
 
-HUGGING_FACE_TOKEN = os.getenv("HUGGING_FACE_TOKEN")
-headers = {"Authorization": f"Bearer {HUGGING_FACE_TOKEN}"}
+st.title("📄 Generador Automático de CV")
 
-def query (payload):
-    response = requests.post(HUGGING_FACE_TOKEN, headers=headers, json=payload)
-    return response.json()
+with st.form("cv_form"):
+    nombre = st.text_input("Nombre completo")
+    profesion = st.text_input("Profesión o título")
+    experiencia = st.text_area("Experiencia laboral (breve descripción o palabras clave)")
+    educacion = st.text_area("Educación")
+    habilidades = st.text_area("Habilidades (separadas por comas)")
+    submitted = st.form_submit_button("Generar CV")
 
-st.set_page_config(page_title="AI Portfolio Generator", layout="wide")
+if submitted:
+    with st.spinner("Generando resumen profesional con IA..."):
+        resumen = generate_summary(experiencia)
 
+    st.success("Resumen generado correctamente ✅")
+    st.write(f"**Resumen profesional:** {resumen}")
 
-st.title("🧠 AI Portfolio Generator (Hugging Face API)")
-
-text = st.text_area("Write your project idea:")
-if st.button("Generate Summary"):
-    if text.strip():
-        with st.spinner("Generating..."):
-            output = query({"inputs": text})
-        st.success(output[0]['summary_text'])
+    create_pdf(nombre, profesion, resumen, experiencia, educacion, habilidades)
+    st.download_button(
+        "Descargar CV en PDF",
+        data=open("cv.pdf", "rb").read(),
+        file_name="cv.pdf",
+        mime="application/pdf"
+    )
